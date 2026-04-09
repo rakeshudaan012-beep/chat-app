@@ -10,14 +10,14 @@ class FirebaseAuthRepository {
   static const String usersCollection = 'users';
   static const String prefKey='prefKey';
 
-  void createdUser({required UserModel user, required String password})async{
+  Future<void> createUser({required UserModel user, required String password})async{
     try{
       var userCred=await firebaseAuth.createUserWithEmailAndPassword(
           email: user.email,
           password: password
       );
       if(userCred.user !=null){
-        firebaseFirestore
+        await firebaseFirestore
             .collection(usersCollection)
             .doc(userCred.user!.uid)
             .set(user.toMap());
@@ -27,7 +27,7 @@ class FirebaseAuthRepository {
       throw Exception('Failed to create user');
     }
     catch(e){
-      throw Exception(e);
+      rethrow;
     }
   }
 

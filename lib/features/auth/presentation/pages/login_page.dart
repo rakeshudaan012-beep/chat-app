@@ -33,6 +33,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Login page',style: TextStyle(color: Colors.white),),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -97,6 +102,9 @@ class _LoginPageState extends State<LoginPage> {
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text("Login"),
                   ),
+                ),
+                SizedBox(
+                  height: 30,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
