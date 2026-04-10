@@ -1,5 +1,9 @@
+import 'package:chat_app1/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:chat_app1/features/auth/presentation/cubit/auth_state.dart';
 import 'package:chat_app1/features/auth/presentation/pages/sing_up.dart';
+import 'package:chat_app1/features/screen/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,22 +17,6 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  bool isLoading = false;
-
-  void login() {
-    if (_formKey.currentState!.validate()) {
-      setState(() => isLoading = true);
-
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() => isLoading = false);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login Successful")),
-        );
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +71,6 @@ class _LoginPageState extends State<LoginPage> {
                     if (value == null || value.isEmpty) {
                       return "Password required";
                     }
-                    if (value.length < 6) {
-                      return "Minimum 6 characters";
-                    }
                     return null;
                   },
                 ),
@@ -96,12 +81,49 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   height: 50,
-                  child: ElevatedButton(
-                    onPressed: isLoading ? null : login,
-                    child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Login"),
-                  ),
+                  child:BlocConsumer<CubitAuth,AuthState>(
+                      builder: (_,state){
+                        if(state is AuthLoadingState){
+                          return ElevatedButton(
+                              onPressed: null,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Creating Account',style: TextStyle(fontSize: 20,color: Colors.white),),
+
+                              SizedBox(width: 11,),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: CircularProgressIndicator(color: Colors.white,),
+                              ),
+                            ],
+                          ));
+                        }
+                        
+                        return ElevatedButton(onPressed: (){
+                          if(_formKey.currentState!.validate()){
+                            context.read<CubitAuth>().loginUser(
+                              email: emailController.text.trim(),
+                              pass: passwordController.text.trim(),
+                            );
+                          }
+                        }, child: Text('Login',style: TextStyle(fontSize: 20,color: Colors.black),)
+                        );
+                      },
+                      listener: (_,state){
+                        if(state is AuthSuccessState){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Account Login Successfully"),backgroundColor: Colors.green,),
+                          );
+                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>HomeScreen()));
+                        }
+
+                        if(state is AuthErrorState){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Failed to Login account"),backgroundColor: Colors.red,),
+                          );
+                        }
+                      }),
                 ),
                 SizedBox(
                   height: 30,

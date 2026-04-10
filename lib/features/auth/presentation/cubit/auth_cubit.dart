@@ -24,4 +24,21 @@ class CubitAuth extends Cubit<AuthState>{
     }
   }
 
+
+  Future<void> loginUser({required String email ,required String pass})async{
+    emit(AuthLoadingState());
+
+    try{
+      await firebaseAuthRepository.loginUser(
+          email: email,
+          password: pass
+      );
+
+      emit(AuthSuccessState());
+
+    }catch(e){
+      emit(AuthErrorState(msgError: e.toString()));
+    }
+  }
+
 }

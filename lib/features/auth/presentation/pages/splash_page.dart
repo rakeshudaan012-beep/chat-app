@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:chat_app1/features/auth/data/auth_repostitory/auth_repo.dart';
+import 'package:chat_app1/features/screen/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -13,11 +16,19 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
+    Timer(const Duration(seconds: 3), () async{
 
-    Timer(const Duration(seconds: 3), () {
+      var prefs=await SharedPreferences.getInstance();
+      String? value=prefs.getString(FirebaseAuthRepository.prefKey);
+
+      Widget nextPage=LoginPage();
+
+      if(value!=null && value!=''){
+        nextPage=HomeScreen();
+      }
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginPage()),
+        MaterialPageRoute(builder: (_) => nextPage),
       );
     });
   }
