@@ -21,14 +21,20 @@ class FirebaseAuthRepository {
           password: password
       );
       if(userCred.user !=null){
+
+        final uid=userCred.user!.uid;
         await firebaseFirestore
             .collection(usersCollection)
             .doc(userCred.user!.uid)
-            .set(user.toMap());
+            .set({
+          ...user.toMap(),
+          'uid': uid,
+          'createdAt': DateTime.now().millisecondsSinceEpoch,
+        });
 
       }
-    }on FirebaseAuthException{
-      throw Exception('Failed to create user');
+    }on FirebaseAuthException {
+      rethrow;
     }
     catch(e){
       rethrow;
@@ -51,7 +57,22 @@ class FirebaseAuthRepository {
 
 
     }on FirebaseAuthException{
-      throw Exception('Failed to login user');
+      rethrow;
+    }
+    catch(e){
+      rethrow;
+    }
+  }
+
+
+  ///getUsers
+  static Future<QuerySnapshot<Map<String,dynamic>>> getAllContacts()async{
+    try{
+      return await firebaseFirestore
+          .collection(usersCollection)
+          .get();
+    }on FirebaseException{
+      throw Exception('Failed to get contacts');
     }
     catch(e){
       rethrow;

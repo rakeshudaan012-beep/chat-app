@@ -1,7 +1,7 @@
 import 'package:chat_app1/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:chat_app1/features/auth/presentation/cubit/auth_state.dart';
 import 'package:chat_app1/features/auth/presentation/pages/sing_up.dart';
-import 'package:chat_app1/features/screen/home_screen.dart';
+import 'package:chat_app1/features/screen/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isLogin=true;
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +83,16 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 50,
                   child:BlocConsumer<CubitAuth,AuthState>(
-                      builder: (_,state){
+                    buildWhen: (prev,current)=> isLogin,
+                      listenWhen:(prev,current)=>isLogin
+                      ,builder: (_,state){
                         if(state is AuthLoadingState){
                           return ElevatedButton(
                               onPressed: null,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Creating Account',style: TextStyle(fontSize: 20,color: Colors.white),),
-
+                              Text('Login Account....',style: TextStyle(fontSize: 20,color: Colors.white),),
                               SizedBox(width: 11,),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -102,6 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                         
                         return ElevatedButton(onPressed: (){
                           if(_formKey.currentState!.validate()){
+                            isLogin=true;
                             context.read<CubitAuth>().loginUser(
                               email: emailController.text.trim(),
                               pass: passwordController.text.trim(),
@@ -120,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         if(state is AuthErrorState){
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Failed to Login account"),backgroundColor: Colors.red,),
+                            SnackBar(content: Text(state.msgError),backgroundColor: Colors.red,),
                           );
                         }
                       }),
@@ -133,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     const Text("Don't have an account?"),
                     TextButton(onPressed: (){
+                      isLogin =false;
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUpPage()));
                     }, child: Text('Sing-in'))
                   ],

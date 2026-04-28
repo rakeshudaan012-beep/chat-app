@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:chat_app1/features/auth/data/auth_repostitory/auth_repo.dart';
-import 'package:chat_app1/features/screen/home_screen.dart';
+import 'package:chat_app1/features/screen/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';

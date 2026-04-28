@@ -145,10 +145,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: DecoratedBox(decoration:BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(10),
-                  ),child: BlocConsumer<CubitAuth,AuthState>(builder: (context,state){
+                  ),
+                    child: BlocConsumer<CubitAuth,AuthState>(
+                      builder: (context,state){
                     if(state is AuthLoadingState){
                       return ElevatedButton(
                           onPressed: null, child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('Creating Account',style: TextStyle(fontSize: 20,color: Colors.white),),
 
@@ -188,7 +191,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     if(state is AuthErrorState){
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Failed to create account"),backgroundColor: Colors.red,),
+                        SnackBar(content: Text(state.msgError),backgroundColor: Colors.red,),
                       );
                     }
                   }),),
