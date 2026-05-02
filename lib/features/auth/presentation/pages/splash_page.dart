@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'package:chat_app1/features/auth/data/auth_repostitory/auth_repo.dart';
 import 'package:chat_app1/features/screen/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
+
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -12,66 +12,64 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  static const _minimumDisplay = Duration(milliseconds: 1500);
 
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () async{
+    _decideNextRoute();
+  }
 
-      var prefs=await SharedPreferences.getInstance();
-      String? value=prefs.getString(FirebaseAuthRepository.prefKey);
+  Future<void> _decideNextRoute() async {
+    final prefsFuture = SharedPreferences.getInstance();
+    final delayFuture = Future.delayed(_minimumDisplay);
 
-      Widget nextPage=LoginPage();
+    await Future.wait([prefsFuture, delayFuture]);
 
-      if(value!=null && value!=''){
-        nextPage=HomeScreen();
-      }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => nextPage),
-      );
-    });
+    if (!mounted) return;
+
+    final prefs = await prefsFuture;
+    final token = prefs.getString(FirebaseAuthRepository.prefKey);
+    final isLoggedIn = token != null && token.isNotEmpty;
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => isLoggedIn ? const HomeScreen() : const LoginPage(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            /// Logo (optional)
             Icon(
               Icons.flutter_dash,
               size: 100,
               color: Colors.blue,
             ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              "My App",
+            SizedBox(height: 20),
+            Text(
+              'My App',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
               ),
             ),
-
-            const SizedBox(height: 10),
-
-            const Text(
-              "Welcome",
+            SizedBox(height: 10),
+            Text(
+              'Welcome',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
             ),
-
-            const SizedBox(height: 30),
-
-            const CircularProgressIndicator(),
+            SizedBox(height: 30),
+            CircularProgressIndicator(),
           ],
         ),
       ),

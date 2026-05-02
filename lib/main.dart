@@ -1,5 +1,7 @@
 import 'package:chat_app1/features/auth/data/auth_repostitory/auth_repo.dart';
 import 'package:chat_app1/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:chat_app1/features/screen/data/get_repo/get_repo.dart';
+import 'package:chat_app1/features/screen/presentation/cubit/get_cubit.dart';
 import 'package:chat_app1/routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,8 @@ void main() async{
   runApp(
       MultiBlocProvider(providers: [
         BlocProvider(create: (_)=>CubitAuth(firebaseAuthRepository:FirebaseAuthRepository()
-        ),)
+        ),),
+        BlocProvider(create: (_)=>GetCubit(firebaseAuthRepository: FirebaseGetRepo()))
       ], child: MyApp())
   );
 }

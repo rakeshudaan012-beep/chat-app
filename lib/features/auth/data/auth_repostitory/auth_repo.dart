@@ -1,3 +1,4 @@
+import 'package:chat_app1/features/screen/data/get_model/contact_get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,16 +67,18 @@ class FirebaseAuthRepository {
 
 
   ///getUsers
-  static Future<QuerySnapshot<Map<String,dynamic>>> getAllContacts()async{
+  /*Future<List<UserGetModel>> getAllContacts()async{
     try{
-      return await firebaseFirestore
+      final snapshot=await firebaseFirestore
           .collection(usersCollection)
           .get();
+
+      return snapshot.docs.map((doc)=>UserGetModel.fromMap(doc.data())).toList();
     }on FirebaseException{
-      throw Exception('Failed to get contacts');
+      rethrow;
     }
     catch(e){
       rethrow;
     }
-  }
+  }*/
 }
